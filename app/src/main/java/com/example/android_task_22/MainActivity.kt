@@ -3,9 +3,11 @@ package com.example.android_task_22
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.android_task_22.databinding.ActivityMainBinding
+import com.google.android.material.snackbar.Snackbar
 
 class MainActivity : AppCompatActivity() {
 
@@ -33,6 +35,60 @@ class MainActivity : AppCompatActivity() {
             questions.add(Question(Question.QUESTIONS[i], Question.QUESTIONS_IS_TRUE[i]))
         }
         questionAdapter.notifyDataSetChanged()
-        //createItemTouchHelper().attachToRecyclerView(binding.rvReminders)
+
+        createItemTouchHelper().attachToRecyclerView(binding.rvQuestions)
     }
+
+    private fun createItemTouchHelper(): ItemTouchHelper {
+        val callback = object : ItemTouchHelper.SimpleCallback(0, ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT) {
+
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                return false
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val position = viewHolder.adapterPosition
+                if(direction == ItemTouchHelper.LEFT)
+                {
+                    onQuestionSwipedLeft(position)
+                }
+                else if(direction == ItemTouchHelper.RIGHT)
+                {
+                    onQuestionSwipedRight(position)
+                }
+            }
+        }
+        return ItemTouchHelper(callback)
+    }
+
+    private fun onQuestionSwipedLeft(position:Int)
+    {
+        if(questions[position].isTrue)
+        {
+            Snackbar.make(binding.rvQuestions, getString(R.string.wrong_answer), Snackbar.LENGTH_SHORT).show()
+            questionAdapter.notifyDataSetChanged()
+            return
+        }
+
+        questions.removeAt(position)
+        questionAdapter.notifyDataSetChanged()
+    }
+
+    private fun onQuestionSwipedRight(position:Int)
+    {
+        if(!questions[position].isTrue)
+        {
+            Snackbar.make(binding.rvQuestions, getString(R.string.wrong_answer), Snackbar.LENGTH_SHORT).show()
+            questionAdapter.notifyDataSetChanged()
+            return
+        }
+
+        questions.removeAt(position)
+        questionAdapter.notifyDataSetChanged()
+    }
+
 }

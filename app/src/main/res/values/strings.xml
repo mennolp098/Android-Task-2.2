@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">Android-Task-2.2</string>
+    <string name="instructions">Quiz instructions</string>
+    <string name="swipe_instructions">Swipe right for true, Swipe left for false.</string>
 </resources>
